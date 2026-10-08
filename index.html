@@ -63,7 +63,7 @@
             margin-bottom: 20px;
         }
 
-        /* --- SLIDE 1: STOCKS GRID --- */
+        /* --- STOCKS GRID --- */
         .stock-market-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -89,7 +89,7 @@
         .stock-symbol { font-size: 1.4rem; font-weight: bold; }
         .stock-price { font-size: 1.6rem; font-weight: bold; font-family: monospace; margin-top: 10px; }
 
-        /* --- SLIDE 2: PANTHERS METRICS --- */
+        /* --- PANTHERS METRICS --- */
         .panthers-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -120,7 +120,7 @@
         .stat-value { font-size: 2.2rem; font-weight: 800; margin-top: 5px; }
         .stat-subtext { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
 
-        /* --- SLIDE 3: GENERAL NHL VIEW --- */
+        /* --- GENERAL NHL VIEW --- */
         .nhl-layout {
             display: grid;
             grid-template-columns: 1fr;
@@ -161,7 +161,7 @@
         .nhl-table th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
         .active-row { background-color: rgba(200, 16, 46, 0.15); font-weight: bold; }
 
-        /* --- SLIDE 4: UTILITY CALENDAR --- */
+        /* --- UTILITY CALENDAR --- */
         .calendar-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -264,70 +264,4 @@
                     <div id="live-scores-container">
                         <div style="color:var(--text-muted); text-align:center; padding: 20px 0;">No active games scheduled at this moment.</div>
                     </div>
-// --- 1. BULLETPROOF ROTATION CAROUSEL ---
-// This execution array is isolated so data load issues can NEVER freeze the page transition loop.
-const slides = document.querySelectorAll('.slide');
-const progressBar = document.getElementById('timer-bar');
-let currentSlideIndex = 0;
-const SLIDE_DURATION = 10000;
-function resetProgressBar() {
-progressBar.style.transition = 'none';
-progressBar.style.width = '0%';
-setTimeout(() => {
-progressBar.style.transition = 'width 10s linear';
-progressBar.style.width = '100%';
-}, 50);
-}
-function rotateSlides() {
-slides[currentSlideIndex].classList.remove('active');
-currentSlideIndex = (currentSlideIndex + 1) % slides.length;
-slides[currentSlideIndex].classList.add('active');
-resetProgressBar();
-}
-resetProgressBar();
-setInterval(rotateSlides, SLIDE_DURATION);
-// --- 2. CORS-SAFE DATA PIPELINES ---
-async function fetchPipelineUpdates() {
-// Unblocked Stock Fetching Engine
-try {
-const res = await fetch('er-api.com');
-const data = await res.json();
-if (data && data.rates) {
-// Using verified live data feed metrics mapped to dummy multipliers to show active movements securely
-document.getElementById('ndaq-val').innerText = $${(data.rates.EUR * 72.4).toFixed(2)};
-document.getElementById('spy-val').innerText = $${(data.rates.EUR * 612.2).toFixed(2)};
-document.getElementById('dis-val').innerText = $${(data.rates.EUR * 94.8).toFixed(2)};
-document.getElementById('goog-val').innerText = $${(data.rates.EUR * 164.1).toFixed(2)};
-}
-} catch (e) { console.log("Stock display buffering...", e); }
-// Safe Backed Hockey Standings Layout
-try {
-// Using an open fallback endpoint format that bypasses proxy blocks natively
-document.getElementById('panthers-pts').innerText = "94";
-document.getElementById('panthers-record').innerText = "43-21-8";
-document.getElementById('panthers-div-rank').innerText = "1st";
-document.getElementById('panthers-conf-rank').innerText = "2nd";
-document.getElementById('div-leader-pts').innerText = "94 PTS";
-document.getElementById('div-leader-team').innerText = "Florida Panthers";
-document.getElementById('conf-leader-pts').innerText = "98 PTS";
-document.getElementById('conf-leader-team').innerText = "NY Rangers";
-document.getElementById('cutoff-pts').innerText = "82 PTS";
-document.getElementById('cutoff-team').innerText = "Washington Capitals";
-// Build Table Layout Natively
-const mockAtlantic = [
-{ name: 'FLA Panthers', gp: 72, pts: 94, active: true },
-{ name: 'BOS Bruins', gp: 72, pts: 93, active: false },
-{ name: 'TOR Maple Leafs', gp: 71, pts: 89, active: false },
-{ name: 'TB Lightning', gp: 71, pts: 85, active: false },
-{ name: 'DET Red Wings', gp: 72, pts: 78, active: false }
-];
-let tableHTML = "";
-mockAtlantic.forEach(t => {
-const rowClass = t.active ? 'class="active-row"' : '';
-tableHTML += <tr ${rowClass}><td>${t.name}</td><td>${t.gp}</td><td>${t.pts}</td></tr>;
-});
-document.getElementById('mini-standings-body').innerHTML = tableHTML;
-} catch (e) { console.log("Hockey tracking hold...", e); }
-}
-fetchPipelineUpdates();
-setInterval(fetchPipelineUpdates, 300000);
+                </div>
