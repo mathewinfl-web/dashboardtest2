@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desk Kiosk Ticker</title>
+    <style>
+        :root {
+            --bg-color: #060913;
+            --card-bg: #0f1626;
+            --text-main: #ffffff;
+            --text-muted: #64748b;
+            --panthers-red: #c8102e;
+            --panthers-gold: #b9975b;
+            --accent-green: #10b981;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .slide-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s ease-in-out, visibility 0.8s;
+            padding: 25px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .slide-title {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        /* --- SLIDE 1: STOCKS GRID --- */
+        .stock-market-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            .stock-market-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .premium-stock-card {
+            background-color: var(--card-bg);
+            border-radius: 14px;
+            padding: 20px 15px;
+            border-bottom: 4px solid var(--accent-green);
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .stock-symbol { font-size: 1.4rem; font-weight: bold; }
+        .stock-price { font-size: 1.6rem; font-weight: bold; font-family: monospace; margin-top: 10px; }
+
+        /* --- SLIDE 2: PANTHERS METRICS --- */
+        .panthers-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 600px) {
+            .panthers-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .stat-box {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-box.highlight {
+            border: 2px solid var(--panthers-gold);
+            background: linear-gradient(180deg, var(--card-bg) 0%, rgba(200, 16, 46, 0.1) 100%);
+        }
+
+        .stat-label { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 2.2rem; font-weight: 800; margin-top: 5px; }
+        .stat-subtext { color: var(--text-muted); font-size: 0.8rem; margin-top: 5px; }
+
+        /* --- SLIDE 3: GENERAL NHL VIEW --- */
+        .nhl-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            max-width: 950px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        @media (min-width: 700px) {
+            .nhl-layout { grid-template-columns: 1fr 1fr; }
+        }
+
+        .live-games-panel, .standings-panel {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .mini-score-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .game-badge {
+            background-color: var(--panthers-red);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .nhl-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .nhl-table th, .nhl-table td { padding: 8px; text-align: left; }
+        .nhl-table th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+        .active-row { background-color: rgba(200, 16, 46, 0.15); font-weight: bold; }
+
+        /* --- SLIDE 4: UTILITY CALENDAR --- */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        @media (min-width: 600px) {
+            .calendar-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .cal-box { background-color: var(--card-bg); border-radius: 14px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .cal-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+
+        .rotation-progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background-color: var(--panthers-gold);
+            width: 0%;
+            transition: width 10s linear;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slide-container">
+        
+        <!-- SLIDE 1: STOCKS -->
+        <div class="slide active" id="slide-stocks">
+            <h2 class="slide-title">Market Portfolio</h2>
+            <div class="stock-market-grid">
+                <div class="premium-stock-card">
+                    <div class="stock-symbol">NDAQ</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Nasdaq</div>
+                    <div class="stock-price" id="ndaq-val">\$---.--</div>
+                </div>
+                <div class="premium-stock-card">
+                    <div class="stock-symbol">SPY</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">S&P 500</div>
+                    <div class="stock-price" id="spy-val">\$---.--</div>
+                </div>
+                <div class="premium-stock-card">
+                    <div class="stock-symbol">DIS</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Disney</div>
+                    <div class="stock-price" id="dis-val">\$---.--</div>
+                </div>
+                <div class="premium-stock-card">
+                    <div class="stock-symbol">GOOG</div>
+                    <div style="color: var(--text-muted); font-size: 0.8rem;">Google</div>
+                    <div class="stock-price" id="goog-val">\$---.--</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: PANTHERS ANALYSIS METRICS -->
+        <div class="slide" id="slide-panthers">
+            <h2 class="slide-title">Florida Panthers Race Tracker</h2>
+            <div class="panthers-grid">
+                <div class="stat-box highlight">
+                    <div class="stat-label">Current Points</div>
+                    <div class="stat-value" id="panthers-pts">--</div>
+                    <div class="stat-subtext" id="panthers-record">-- - -- - --</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Division Rank</div>
+                    <div class="stat-value" id="panthers-div-rank">--</div>
+                    <div class="stat-subtext">Atlantic Division</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Conference Rank</div>
+                    <div class="stat-value" id="panthers-conf-rank">--</div>
+                    <div class="stat-subtext">Eastern Conference</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Division Leader</div>
+                    <div class="stat-value" id="div-leader-pts" style="font-size:1.4rem; margin-top:12px;">--</div>
+                    <div class="stat-subtext" id="div-leader-team">Loading...</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">Conference Leader</div>
+                    <div class="stat-value" id="conf-leader-pts" style="font-size:1.4rem; margin-top:12px;">--</div>
+                    <div class="stat-subtext" id="conf-leader-team">Loading...</div>
+                </div>
+                <div class="stat-box highlight">
+                    <div class="stat-label">Playoff Cutoff Line</div>
+                    <div class="stat-value" id="cutoff-pts" style="color: var(--accent-green)">--</div>
+                    <div class="stat-subtext" id="cutoff-team">Wildcard 2 Line</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: GENERAL NHL LIVE SYSTEM -->
+        <div class="slide" id="slide-scores">
+            <h2 class="slide-title">League Arena Overview</h2>
+            <div class="nhl-layout">
+                <div class="live-games-panel">
+                    <h3 style="margin-top:0; font-size:1rem; letter-spacing:1px;">TODAY'S GAMES</h3>
+                    <div id="live-scores-container">
+                        <div style="color:var(--text-muted); text-align:center; padding: 20px 0;">No active games scheduled at this moment.</div>
+                    </div>
